@@ -70,8 +70,7 @@ module OmniAuth
       def callback_phase # rubocop:disable CyclomaticComplexity
         error = request.params['error_reason'] || request.params['error']
         Rails.logger.info "(params) --------- #{request.params}"
-        Rails.logger.info "(session - state) --------- #{session['omniauth.state']}"
-        Rails.logger.info "(session - params) --------- #{session['omniauth.params']}"
+        Rails.logger.info "(session - omniauth.state) --------- #{session['omniauth.state']}"
         if error
           fail!(error, CallbackError.new(request.params['error'], request.params['error_description'] || request.params['error_reason'], request.params['error_uri']))
         elsif !options.provider_ignores_state && (request.params['state'].to_s.empty? || request.params['state'] != session.delete('omniauth.state'))
