@@ -60,6 +60,8 @@ module OmniAuth
           @env['rack.session'] ||= {}
         end
         session['omniauth.state'] = params[:state]
+
+        Rails.logger.info "(stated stored in session) --------- #{session['omniauth.state']}"
         params
       end
 
