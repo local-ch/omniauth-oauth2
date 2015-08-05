@@ -47,6 +47,8 @@ module OmniAuth
       end
 
       def request_phase
+        url = client.auth_code.authorize_url({:redirect_uri => callback_url}.merge(authorize_params))
+        Rails.logger.info "(request_phase) --------- #{url}"
         redirect client.auth_code.authorize_url({:redirect_uri => callback_url}.merge(authorize_params))
       end
 
@@ -67,6 +69,9 @@ module OmniAuth
 
       def callback_phase # rubocop:disable CyclomaticComplexity
         error = request.params['error_reason'] || request.params['error']
+        Rails.logger.info "(params) --------- #{request.params}"
+        Rails.logger.info "(session - state) --------- #{session['omniauth.state']}"
+        Rails.logger.info "(session - params) --------- #{session['omniauth.params']}"
         if error
           fail!(error, CallbackError.new(request.params['error'], request.params['error_description'] || request.params['error_reason'], request.params['error_uri']))
         elsif !options.provider_ignores_state && (request.params['state'].to_s.empty? || request.params['state'] != session.delete('omniauth.state'))
