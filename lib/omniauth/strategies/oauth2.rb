@@ -60,6 +60,10 @@ module OmniAuth
           @env["rack.session"] ||= {}
         end
         session["omniauth.state"] = params[:state]
+
+        Rails.logger.error "OAUTH2 (params) --------- #{request.params}"
+        Rails.logger.error "OAUTH2 (session - omniauth.state) --------- (#{session['omniauth.state']})"
+
         params
       end
 
@@ -69,6 +73,11 @@ module OmniAuth
 
       def callback_phase # rubocop:disable AbcSize, CyclomaticComplexity, MethodLength, PerceivedComplexity
         error = request.params["error_reason"] || request.params["error"]
+
+        Rails.logger.error "OAUTH2 (params) --------- #{request.params}"
+        Rails.logger.error "OAUTH2 (session - omniauth.state) --------- (#{session['omniauth.state']})"
+        Rails.logger.error "OAUTH2 (session - request.params['state']) --------- (#{request.params["state"]})"
+
         if error
           fail!(error, CallbackError.new(request.params["error"], request.params["error_description"] || request.params["error_reason"], request.params["error_uri"]))
         elsif !options.provider_ignores_state && (request.params["state"].to_s.empty? || request.params["state"] != session.delete("omniauth.state"))
